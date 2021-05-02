@@ -71,22 +71,24 @@ class KB:
         input = input.replace(' ','')                                                       # removes all spaces in input
         translation = ''
         # seperates input in single () terms to translate, creates 'bracket_translation'
-        while '(' in input:
+        k=KB()
+        if '(' in input:
+            I='I'
             end_idx = input.find(')')                                                       # finds end of 'bracket_term' that should get translated
             start_idx = input.rfind('(', 0, end_idx)                                        # finds start of 'bracket_term'
             bracket_term = input[start_idx+1:end_idx-1]                                     # saves 'bracket_term' (without brakets) as string
             input = '%s%s%s' %(input[0:start_idx-1], I, input[end_idx+1:])                  # replaces '(bracket_term)' with placeholder 'I', gets rid of brakets
-            if translation = '':
-                translation = '(%s)' %replace_operator(bracket_term)                        # saves first part of CNS translation (with brackets)
+            if translation == '':
+                translation = '(%s)' %k.replace_operator(bracket_term)                        # saves first part of CNS translation (with brackets)
             else:
-                outer_translation = '(%s)' %replace_operator(bracket_term)                  # saves additional CNS translation with placeholder 'I'
+                outer_translation = '(%s)' %k.replace_operator(bracket_term)                  # saves additional CNS translation with placeholder 'I'
                 translation = outer_translation.replace('I', '%s' %translation)             # replaces I with former translation
-        bracket_translation = replace_operator(input)
+        bracket_translation = k.replace_operator(input)
         if 'I' in bracket_translation:                                                      # if 'I' was introduced as a placeholder
             bracket_translation = bracket_translation.replace('I', '%s' %translation)       # replace 'I'
 
         # translates negation over brackets ~(...)
-        bracket_translation = bracket_negation(bracket_translation)
+        bracket_translation = k.bracket_negation(bracket_translation)
 
         final_translation = bracket_translation
         return(final_translation)
@@ -95,14 +97,17 @@ class KB:
     def replace_operator(self, str):
         if str.isalpha() and len(str) == 1:
             # single Letter needs no translation
+            print('String is one literal :',str)
             return(str)
 
         elif '^' in str or '&' in str or 'and' in str or 'AND' in str:
             # translate conjunction (AND)
+            print('String has an and :','%s&%s' %(str[0], str[-1]))
             return('%s&%s' %(str[0], str[-1]))
 
         elif 'v' in str or '|' in str or 'or' in str or 'OR' in str:
             # translate disjunction (OR)
+            print('String has an OR :','%s|%s' %(str[0], str[-1]))
             return('%s|%s' %(str[0], str[-1]))
 
         elif '<==>' in str or '<-->' in str:
@@ -110,12 +115,14 @@ class KB:
             # R <==> P
             # translates to (R ==> P) & (P ==> R)
             # translates to (~R | P) & (~P | R)
+            print('String has an Biderectional :','(~%s|%s)&(~%s|%s)' %(str[0], str[-1], str[-1], str[0]))
             return('(~%s|%s)&(~%s|%s)' %(str[0], str[-1], str[-1], str[0]))
 
         elif '==>' in str or '-->' in str:
             # translate implication
             # R ==> P
             # translates to ~R | P
+            print('String has','~%s|%s' %(str[0], str[-1]))
             return('~%s|%s' %(str[0], str[-1]))
 
 
@@ -146,7 +153,7 @@ class KB:
 
 B=KB()
 s= B.get_sentence()
-B.operators_check(s)
+B.to_CNS(s)
 
 #     kb = KB()                       # KB as class handle
 #     conti = true
