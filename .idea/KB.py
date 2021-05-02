@@ -1,4 +1,4 @@
-import re
+
 class KB:
 
     # KB=['r'];
@@ -59,8 +59,11 @@ class KB:
     def to_CNS(self, input):
         # translates input to CNF format
         # missing:
-        # what if more than one braket term
-        # distribute ANDs
+            # solve bracket negation
+            # distribute ANDs
+
+        input = input.replace(' ','')                                                       # removes all spaces in input
+        input = input.replace('~~','')                                                      # removes all double negations
 
         input = input.replace(' ','')                                                       # removes all spaces in input
         translation = ''
@@ -101,15 +104,43 @@ class KB:
             # R <==> P
             # translates to (R ==> P) & (P ==> R)
             # translates to (~R | P) & (~P | R)
-            print('String has an Biderectional :','(~%s|%s)&(~%s|%s)' %(str[0], str[-1], str[-1], str[0]))
-            return'(~%s|%s)&(~%s|%s)' %(str[0], str[-1], str[-1], str[0])
+            a=str.partition('<==>')[0]       # everything on the left
+            b=str.partition('<==>')[-1]      # everything on the right
+            str = '(' + str[0:len(a)-1] + '~' + a[-1] + '|' + b + ')&(' + '~' + b[0] + b[1:len(b)] + '|' + a + ')'
 
-        elif '==>' in str or '-->' in str:
+        elif '==>' in str:
             # translate implication
             # R ==> P
             # translates to ~R | P
-            print('String has','~%s|%s' %(str[0], str[-1])) # is this true?
-            return '~%s|%s' %(str[0], str[-1])
+            a=str.partition('==>')[0]       # everything on the left
+            b=str.partition('==>')[-1]      # everything on the right
+            #replacement = '~%s|%s' %(a[-1], b[0])
+            str = str[0:len(a)-1] + '~' + a[-1] + '|' + b
+        return(str)
+        # Old stuff (not used at the moment
+        #if str.isalpha() and len(str) == 1:
+        #    # single Letter needs no translation
+        #    print('String is one literal :',str)
+        #    return str
+
+        #if '^' in str or '&' in str or 'and' in str or 'AND' in str:
+        #    # translate conjunction (AND)
+        #    print('String has an and :','%s&%s' %(str[0], str[-1]))
+        #    return '%s&%s' %(str[0], str[-1])
+        #    return(str)
+        # if '^' in str or '&' in str or 'and' in str or 'AND' in str:
+        #     # translate conjunction (AND)
+        #     if str[0].isalpha():                          #if first charackter is not a negation
+        #         return('%s&%s' %(str[0], str[-1]))
+        #     elif str[1].isalpha():
+        #         return('~%s&%s' %(str[1], str[-1]))
+        #
+        # if 'v' in str or '|' in str or 'or' in str or 'OR' in str:
+        #     # translate disjunction (OR)
+        #     if str[0].isalpha():                          #if first charackter is not a negation
+        #         return('%s|%s' %(str[0], str[-1]))
+        #     elif str[1].isalpha():
+        #         return('~%s|%s' %(str[1], str[-1]))
 
 
 
