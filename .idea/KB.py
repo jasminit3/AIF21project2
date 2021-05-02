@@ -1,21 +1,26 @@
-
+import re
 class KB:
 
     # KB=['r'];
     # KB is a list
     # can be extended by extend('clause')
     # can be retracted by remove('clause')
-    KB = ['~P']
+    KB = ['P']
 
 
     def get_sentence(self):
         b = input('Input new Belief : ')
         b= b.upper()
+        if '~' in b or 'NOT' in b:
+            # translate negation
+            # translates to ~R
+            b= b.replace('NOT','~')
+            print('String has',b)
         # transform input to CNS
         kb=KB()
-        print('input is', b)
+        #print('input is', b)
         newbelief=kb.to_CNS(b)
-        print('newbelief is ',newbelief)
+        #print('newbelief is ',newbelief)
         kb.ask(newbelief)
 
 
@@ -38,14 +43,17 @@ class KB:
     def contraction(self, newbelief, knowledgebase):
         print('knowledgebase before contraction ',knowledgebase, 'newbelief before contraction', newbelief)
         negated = '~'+ newbelief
-        print('negated input',negated)
+        not_negated = newbelief[1:]
+        #print('not negated input',not_negated)
         if newbelief and negated in knowledgebase:
             knowledgebase.remove(negated)
             knowledgebase.append(newbelief)
-        # elif newbelief and '%s' in knowledgebase :
-        #     knowledgebase.remove('%s')
-        #     knowledgebase.append('~%s')
-        #     print('updated Knowledgebase ', KB.KB)
+        elif newbelief and not_negated in knowledgebase :
+             knowledgebase.remove(not_negated)
+             knowledgebase.append(newbelief)
+        else:
+            knowledgebase.append(newbelief)
+        print('updated Knowledgebase ', KB.KB)
 
 
     def to_CNS(self, input):
@@ -59,7 +67,8 @@ class KB:
         # seperates input in single () terms to translate, creates 'bracket_translation'
         k=KB()
         if translation == '':
-                translation = '%s' %k.replace_operator(input)                        # saves first part of CNS translation (with brackets)
+                translation = '%s' %k.replace_operator(input)
+                print('t', translation)# saves first part of CNS translation (with brackets)
         return(translation)
 
 
@@ -70,15 +79,22 @@ class KB:
             print('String is one literal :',str)
             return str
 
-        elif '^' in str or '&' in str or 'and' in str or 'AND' in str:
-            # translate conjunction (AND)
-            print('String has an and :','%s&%s' %(str[0], str[-1]))
-            return '%s&%s' %(str[0], str[-1])
+        if '~' in str and len(str)==2:
+            return str
 
-        elif 'v' in str or '|' in str or 'or' in str or 'OR' in str:
+        elif '^' in str or '&' in str or 'AND' in str:
+            # translate conjunction (AND)
+            str= str.replace('^','&')
+            str = str.replace('AND','&')
+            print('String has an and :',str)#'%s&%s' %(str[0], str[-1]))
+            return str
+
+        elif 'v' in str or '|' in str  or 'OR' in str:
             # translate disjunction (OR)
-            print('String has an OR :','%s|%s' %(str[0], str[-1]))
-            return '%s|%s' %(str[0], str[-1])
+            str= str.replace('V','|')
+            str= str.replace('OR','|')
+            print('String has an OR :',str)
+            return str
 
         elif '<==>' in str or '<-->' in str:
             # eliminate equalance
@@ -95,18 +111,12 @@ class KB:
             print('String has','~%s|%s' %(str[0], str[-1])) # is this true?
             return '~%s|%s' %(str[0], str[-1])
 
-        elif 'not' in str or '~' in str or 'NOT' in str:
-            # translate implication
-            # R ==> P
-            # translates to ~R | P
-            print('String has','~%s' %(str[-1])) # is this true?
-            return '~%s' %(str[-1])
 
 
     #
-
-B=KB()
-B.get_sentence()
+while True:
+    B=KB()
+    B.get_sentence()
 
 
 #     kb = KB()                       # KB as class handle
