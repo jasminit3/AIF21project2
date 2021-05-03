@@ -5,23 +5,25 @@ class KB:
     # KB is a list
     # can be extended by extend('clause')
     # can be retracted by remove('clause')
-    KB = ['P']
+    KB = []
 
 
     def get_sentence(self):
         b = input('Input new Belief : ')
         b= b.upper()
-        if '~' in b or 'NOT' in b:
-            # translate negation
-            # translates to ~R
-            b= b.replace('NOT','~')
-            print('String has',b)
         # transform input to CNS
         kb=KB()
         #print('input is', b)
         newbelief=kb.to_CNS(b)
-        #print('newbelief is ',newbelief)
-        kb.ask(newbelief)
+        print('newbelief in CNS-Format is: ',newbelief)
+        # if input includes AND -> more than one new belief
+        if '&' in newbelief:
+            splitted_newbeliefs = kb.seperate_ANDs(newbelief)
+            for i in range(len(splitted_newbeliefs)):
+                newbelief = splitted_newbeliefs[i]
+                kb.ask(newbelief)
+        else:
+            kb.ask(newbelief)
 
 
     def ask(self, new_belief):
@@ -38,8 +40,6 @@ class KB:
             print('belief added to KB: ',new_belief, 'New updated KB', k)
 
 
-
-
     def contraction(self, newbelief, knowledgebase):
         print('knowledgebase before contraction ',knowledgebase, 'newbelief before contraction', newbelief)
         negated = '~'+ newbelief
@@ -47,7 +47,7 @@ class KB:
         #print('not negated input',not_negated)
         if newbelief and negated in knowledgebase:
             knowledgebase.remove(negated)
-            knowledgebase.append(newbelief)
+            knowledgebase.add(newbelief)
         elif newbelief and not_negated in knowledgebase :
              knowledgebase.remove(not_negated)
              knowledgebase.append(newbelief)
@@ -71,44 +71,53 @@ class KB:
         k=KB()
         if translation == '':
                 translation = '%s' %k.replace_operator(input)
-                print('t', translation)# saves first part of CNS translation (with brackets)
+                #print('t', translation) # saves first part of CNS translation (with brackets)
         return(translation)
 
 
 
     def replace_operator(self, str):
-        if str.isalpha() and len(str) == 1:
-            # single Letter needs no translation
-            print('String is one literal :',str)
-            return str
+        # if str.isalpha() and len(str) == 1:
+        #     # single Letter needs no translation
+        #     print('String is one literal :',str)
+        #     return str
+        #
+        # if '~' in str and len(str)==2:
+        #     return str
+        # Basic variable translation:
+        if 'NOT' in str:
+            # translate negation
+            # translates to ~R
+            b= b.replace('NOT','~')
+            #print('String has',b)
 
-        if '~' in str and len(str)==2:
-            return str
-
-        elif '^' in str or '&' in str or 'AND' in str:
+        if '^' in str or 'AND' in str:
             # translate conjunction (AND)
             str= str.replace('^','&')
             str = str.replace('AND','&')
-            print('String has an and :',str)#'%s&%s' %(str[0], str[-1]))
-            return str
 
-        elif 'v' in str or '|' in str  or 'OR' in str:
+        if 'v' in str or 'OR' in str:
             # translate disjunction (OR)
-            str= str.replace('V','|')
+            str= str.replace('v','|')
             str= str.replace('OR','|')
-            print('String has an OR :',str)
-            return str
+            #print('String has an OR :',str)
 
-        elif '<==>' in str or '<-->' in str:
+        if '<==>' in str or '<-->' in str:
             # eliminate equalance
             # R <==> P
             # translates to (R ==> P) & (P ==> R)
             # translates to (~R | P) & (~P | R)
-            a=str.partition('<==>')[0]       # everything on the left
-            b=str.partition('<==>')[-1]      # everything on the right
-            str = '(' + str[0:len(a)-1] + '~' + a[-1] + '|' + b + ')&(' + '~' + b[0] + b[1:len(b)] + '|' + a + ')'
+            if '<==>' in str:
+                a=str.partition('<==>')[0]       # everything on the left
+                b=str.partition('<==>')[-1]      # everything on the right
+            elif '<-->' in str:
+                a=str.partition('<-->')[0]       # everything on the left
+                b=str.partition('<-->')[-1]      # everything on the right
+            #str = '(' + str[0:len(a)-1] + '~' + a[-1] + '|' + b + ')&(' + '~' + b[0] + b[1:len(b)] + '|' + a + ')'
+            str = str[0:len(a)-1] + '~' + a[-1] + '|' + b + '&' + '~' + b[0] + b[1:len(b)] + '|' + a
+            # this is wrong, but it workes bc of seperate_ANDs
 
-        elif '==>' in str or '-->' in str:
+        if '==>' in str or '-->' in str:
             # translate implication
             # R ==> P
             # translates to ~R | P
@@ -118,13 +127,20 @@ class KB:
             elif '-->' in str:
                 a=str.partition('-->')[0]       # everything on the left
                 b=str.partition('-->')[-1]# everything on the right
-            #replacement = '~%s|%s' %(a[-1], b[0])
             str = str[0:len(a)-1] + '~' + a[-1] + '|' + b
         return(str)
 
+    def seperate_ANDs(self, str):
+        # seperates string at AND to produce more than one new belief
+        # works only without brakets at the moment
+        statements = []
+        while '&' in str:
+            statements.append(str.partition('&')[0])        # everything on the left of & -> first statement
+            str = str.partition('&')[-1]                    # everything on the right -> look for additional '&'
+        statements.append(str)                              # rest of the original statement -> last statement
+        return (statements)
 
 
-    #
 while True:
     B=KB()
     B.get_sentence()
