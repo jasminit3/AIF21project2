@@ -47,7 +47,7 @@ class KB:
         #print('not negated input',not_negated)
         if newbelief and negated in knowledgebase:
             knowledgebase.remove(negated)
-            knowledgebase.add(newbelief)
+            knowledgebase.append(newbelief)
         elif newbelief and not_negated in knowledgebase :
              knowledgebase.remove(not_negated)
              knowledgebase.append(newbelief)
@@ -115,7 +115,7 @@ class KB:
                 b=str.partition('<-->')[-1]      # everything on the right
             #str = '(' + str[0:len(a)-1] + '~' + a[-1] + '|' + b + ')&(' + '~' + b[0] + b[1:len(b)] + '|' + a + ')'
             str = str[0:len(a)-1] + '~' + a[-1] + '|' + b + '&' + '~' + b[0] + b[1:len(b)] + '|' + a
-            # this is wrong, but it workes bc of seperate_ANDs
+            # this is momuntaritly wrong (bc of missing brackets), but it gets transformet correctly in seperate_ANDs
 
         if '==>' in str or '-->' in str:
             # translate implication
@@ -128,6 +128,7 @@ class KB:
                 a=str.partition('-->')[0]       # everything on the left
                 b=str.partition('-->')[-1]# everything on the right
             str = str[0:len(a)-1] + '~' + a[-1] + '|' + b
+        str = str.replace('~~','')
         return(str)
 
     def seperate_ANDs(self, str):
