@@ -46,13 +46,13 @@ class KB:
         not_negated = newbelief[1:]
         #print('not negated input',not_negated)
         if newbelief and negated in knowledgebase:
-            knowledgebase.remove(negated)
-            knowledgebase.append(newbelief)
+            KB.KB.remove(negated)
+            KB.KB.append(newbelief)
         elif newbelief and not_negated in knowledgebase :
-             knowledgebase.remove(not_negated)
-             knowledgebase.append(newbelief)
+             KB.KB.remove(not_negated)
+             KB.KB.append(newbelief)
         else:
-            knowledgebase.append(newbelief)
+            KB.KB.append(newbelief)
         print('updated Knowledgebase ', KB.KB)
 
 
@@ -88,7 +88,7 @@ class KB:
         if 'NOT' in str:
             # translate negation
             # translates to ~R
-            b= b.replace('NOT','~')
+            str= str.replace('NOT','~')
             #print('String has',b)
 
         if '^' in str or 'AND' in str:
@@ -115,7 +115,7 @@ class KB:
                 b=str.partition('<-->')[-1]      # everything on the right
             #str = '(' + str[0:len(a)-1] + '~' + a[-1] + '|' + b + ')&(' + '~' + b[0] + b[1:len(b)] + '|' + a + ')'
             str = str[0:len(a)-1] + '~' + a[-1] + '|' + b + '&' + '~' + b[0] + b[1:len(b)] + '|' + a
-            # this is momuntaritly wrong (bc of missing brackets), but it gets transformet correctly in seperate_ANDs
+            # this is wrong, but it workes bc of seperate_ANDs
 
         if '==>' in str or '-->' in str:
             # translate implication
