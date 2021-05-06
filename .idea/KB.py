@@ -43,22 +43,31 @@ class KB:
 
     def contraction(self, newbelief, knowledgebase):
         d = Dictionary.Dictionary() # dictionary object initialization
-        t= d.getTruelogic(newbelief) #returns literals which is true from the dictionary into a variable, this is an array of true keys
-        print('knowledgebase before contraction ',knowledgebase, 'newbelief before contraction', newbelief, 'True literals in the dictionary', t)
+        #t= d.getTruelogic(newbelief) #returns literals which is true from the dictionary into a variable, this is an array of true keys
+        #print('knowledgebase before contraction ',knowledgebase, 'newbelief before contraction', newbelief, 'True literals in the dictionary', t)
         negated = '~'+ newbelief
-        not_negated = newbelief[1:]
+        not_negated = newbelief.partition('~')[-1]
+        print('not negated term', not_negated)
         #print('not negated input',not_negated)
         if newbelief and negated in knowledgebase:
             KB.KB.remove(negated)
             KB.KB.append(newbelief)
+            t= d.getTruelogic(newbelief) #returns literals which is true from the dictionary into a variable, this is an array of true keys
+            print('knowledgebase before contraction ',knowledgebase, 'newbelief before contraction', newbelief, 'True literals in the dictionary', t)
             d.newBelief(newbelief, True)
         elif newbelief and not_negated in knowledgebase :
+             t= d.getTruelogic(not_negated)
+             print('get true value from dict not negated', t)
              KB.KB.remove(not_negated)
              KB.KB.append(newbelief)
              d.newBelief(not_negated, False)
-        else:
-            KB.KB.append(newbelief)
-            d.newBelief(newbelief, True)
+        elif newbelief not in knowledgebase:
+             if '~' in newbelief and d.logicDict[not_negated] == None:
+                d.newBelief(not_negated, False)
+                KB.KB.append(newbelief)
+             else:
+                KB.KB.append(newbelief)
+                d.newBelief(newbelief, True)
         print('updated Knowledgebase ', KB.KB)
 
 

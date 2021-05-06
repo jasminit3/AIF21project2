@@ -29,6 +29,7 @@ class Dictionary:
 
     def getTruelogic(self, nb):
         #beliefs= []
+        print('received nb in gettruelogic', nb)
         x = Dictionary.logicDict[nb]
         #for nb in Dictionary.logicDict:
             #if Dictionary.logicDict[x]==True:
