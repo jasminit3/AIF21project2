@@ -1,3 +1,4 @@
+import Dictionary
 
 class KB:
 
@@ -41,18 +42,23 @@ class KB:
 
 
     def contraction(self, newbelief, knowledgebase):
-        print('knowledgebase before contraction ',knowledgebase, 'newbelief before contraction', newbelief)
+        d = Dictionary.Dictionary() # dictionary object initialization
+        t= d.getTruelogic() #returns literals which is true from the dictionary into a variable, this is an array of true keys
+        print('knowledgebase before contraction ',knowledgebase, 'newbelief before contraction', newbelief, 'True literals in the dictionary', t)
         negated = '~'+ newbelief
         not_negated = newbelief[1:]
         #print('not negated input',not_negated)
         if newbelief and negated in knowledgebase:
             KB.KB.remove(negated)
             KB.KB.append(newbelief)
+            d.newBelief(newbelief, True)
         elif newbelief and not_negated in knowledgebase :
              KB.KB.remove(not_negated)
              KB.KB.append(newbelief)
+             d.newBelief(not_negated, False)
         else:
             KB.KB.append(newbelief)
+            d.newBelief(newbelief, True)
         print('updated Knowledgebase ', KB.KB)
 
 

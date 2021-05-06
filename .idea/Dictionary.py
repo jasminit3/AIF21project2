@@ -2,21 +2,30 @@
 class Dictionary:
 
 
+    # logicDict = {
+    #     'A': None,
+    #     'B': None,
+    #     'C': None,
+    #     '~A': None,
+    #     '~B': None,
+    #     '~C': None,
+    #     'A|B' : None,
+    #     'A|C': None,
+    #     'B|C':True,
+    #     '~A|B':None,
+    # }
     logicDict = {
         'A': None,
         'B': None,
-        'C': None,
-        '~A': None,
-        '~B': None,
-        '~C': None,
-        'A|B' : None,
-        'A|C': None,
-        'B|C':True,
-        '~A|B':None,
+        'C': None
     }
 
-    def newBelief(self, NB):
-        Dictionary.logicDict[NB] = True
+    def newBelief(self, NB, bool):
+        if bool== False:
+            Dictionary.logicDict[NB] = False
+        else:
+            Dictionary.logicDict[NB] = True
+        print('updated dict: ',Dictionary.logicDict)
 
     def getTruelogic(self):
         beliefs= []
@@ -26,7 +35,7 @@ class Dictionary:
                 print('True formulas', x)
         return beliefs
 
-D = Dictionary()
-D.newBelief('A')
-x= D.getTruelogic()
-print('x returned', x)
+#D = Dictionary()
+#D.newBelief('A')
+#x= D.getTruelogic()
+#print('x returned', x)
