@@ -27,13 +27,14 @@ class Dictionary:
             Dictionary.logicDict[NB] = True
         print('updated dict: ',Dictionary.logicDict)
 
-    def getTruelogic(self):
-        beliefs= []
-        for x in Dictionary.logicDict:
-            if Dictionary.logicDict[x]==True:
-                beliefs.append(x)
-                print('True formulas', x)
-        return beliefs
+    def getTruelogic(self, nb):
+        #beliefs= []
+        x = Dictionary.logicDict[nb]
+        #for nb in Dictionary.logicDict:
+            #if Dictionary.logicDict[x]==True:
+                #beliefs.append(x)
+        print('True formulas', x)
+        return x
 
 #D = Dictionary()
 #D.newBelief('A')

@@ -43,7 +43,7 @@ class KB:
 
     def contraction(self, newbelief, knowledgebase):
         d = Dictionary.Dictionary() # dictionary object initialization
-        t= d.getTruelogic() #returns literals which is true from the dictionary into a variable, this is an array of true keys
+        t= d.getTruelogic(newbelief) #returns literals which is true from the dictionary into a variable, this is an array of true keys
         print('knowledgebase before contraction ',knowledgebase, 'newbelief before contraction', newbelief, 'True literals in the dictionary', t)
         negated = '~'+ newbelief
         not_negated = newbelief[1:]
