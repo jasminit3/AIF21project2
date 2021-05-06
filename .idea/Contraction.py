@@ -1,100 +1,150 @@
-
-# KB = [A|B, ~A, B]   dict = [~A, B, ~C]      input = ~B
-# resolution -> false, do contraction
-# contraction -> replace either A|B or B
-
-# OR
-# KB = [A|B]      input ~A     -->  KB = [~A, B]
+import Dictionary
+import Resolution
 
 
-# resolution returns false -> there needs to be a change
-# contraction
-# simplify KB
+class Contraction:
 
 
-def contr(p, KB):
-    # plan:
-    # seperate brackets:
+    # Contraction plan:
+    # seperate brackets
+    # negate input
     # seperate string at operator
     # for single literal
-        # replace KB
-        # check logical outcome
+    # replace KB
+    # check logical outcome
     # for OR
-        # leftside: remove ~, look for issues with directory
-        # rightside:    - "" -
+    # leftside: remove ~, look for issues with directory
+    # rightside:    - "" -
     # change KB accordingly
     # return KB
     #
-    #
-    #without brackets (max two literals)
-    if len(p) < 3:       #if only one (negated) literal
-        a=p
-        is_Issue_a = isIssue(a) # checks if issue with dictonary -> obsolete bc resolution?
-        if is_Issue_a:
-            print("contraction: KB: " ,KB, " gets updated with a: ", a)
-            KB = replaceKB(a, KB)
-            print('contraction: updated KB is: '%KB)
-        return (KB)
-    if '|' in p:
-        # OR needs replacement if both of its sides return an issue with KB
-        # split sentence p at opartor
-        a=p.partition('|')[0]       # everything on the left
-        b=p.partition('|')[-1]      # everything on the right
-        # check if issue with respective part (save as var to save calc time) -> obsolete bc resolution?
-        is_Issue_a = isIssue(a)
-        is_Issue_b = isIssue(b)
-        # replace the corresponding part of KB
-        if is_Issue_a and is_Issue_b:
-            # check which one is better to replace
-#            KB = replaceKB( lowerPrio(a,b),KB) # needs function to determine variable with lower priority
-            print('contraction: KB: ', KB, ' gets updated with b: ', b)
-            KB = replaceKB(b,KB)
-            print('contraction: updated KB is: ', KB)
+
+    def contr(self, new_entry, KB):
+        # function contracts KB in a way that p can be appended to KB without conflicts
+        co = Contraction
+        di = Dictionary.Dictionary
+        re = Resolution
+        if len(new_entry) < 3:  # if only one (negated) literal
+            # checks if issue with dictonary -> obsolete bc resolution?
+            if co.isIssue(self, new_entry):
+                print("Contraction: KB: ", KB, " gets updated with singe literal a: ", new_entry)
+                KB = co.replaceKB(self, new_entry, KB)
+                print('Contraction: updated KB is: ' % KB)
+            # remove all dublicates in KB
+            KB = list(dict.fromkeys(KB))
+            return (KB)
+
+        if '|' in new_entry:
+            # replacement with input with OR operator
+            a = new_entry.partition('|')[0]  # everything on the left
+            b = new_entry.partition('|')[-1]  # everything on the right
+            # check if issue with respective part (save as var to save calc time) -> obsolete bc resolution?
+            is_Issue_a = co.isIssue(self, a)
+            is_Issue_b = co.isIssue(self, b)
+            # replace the corresponding part of KB
+            if is_Issue_a and is_Issue_b:
+                # check which one is better to replace
+                # KB = replaceKB( lowerPrio(a,b),KB) # needs function to determine variable with lower priority
+                print('Contraction: KB: ', KB, ' gets contracted with b: ', b)
+                KB = co.replaceKB(self, b, KB)
+                print('Contraction: updated KB is: ', KB)
+            else:
+                # simplyfy KB accordingly
+                print('Contraction: KB: ', KB, ' gets simplified with b: ', b)
+                # negations of a and b
+                old_a = '~' + a
+                old_a.replace('~~', '')
+                old_b = '~' + b
+                old_b.replace('~~', '')
+                for k in len(KB):
+                    if is_Issue_a and old_a in KB[k]:
+                        # if left issue -> replace left statement in KB
+                        KB.remove(KB[k])
+                        KB.append(new_entry)
+                    if is_Issue_b and old_b in KB[k]:
+                        # if right issue -> replace right statement in KB
+                        KB.remove(KB[k])
+                        KB.append(new_entry)
+            # remove all dublicates in KB
+            KB = list(dict.fromkeys(KB))
+            print('Contraction: updated KB is: ', KB)
+            return (KB)
         else:
             KB.append(p)
-            print('Contranction added something to WB, why???')
-        # similar with singel literals
-        return (KB)
+            print('Contranction: added p to WB, but WHY WHY WHY??? this else should not be executed')
+            # remove all dublicates in KB
+            KB = list(dict.fromkeys(KB))
+            return (KB)
 
-
-    def isIssue(str):
-    # checks if there i an issue between literal in str and current belief (saved in dict)
-        dict = Dictionary()
-        literal =  str[-1]                  # seperates negation from literal (if there is a negation)
-        val = dict.getTruelogic(literal)    # gets bool value of literal
-        if '~' in str and val == False:     # if str=~A and A in dict is False: -> False
+    def isIssue(self, str):
+        # checks if there is an issue between literal in str and current belief (saved in dict)
+        dict = Dictionary.Dictionary
+        literal = str[-1]  # seperates negation from literal (if there is a negation)
+        val = dict.getTruelogic(self, literal)  # gets bool value of literal
+        if '~' in str and val == False:  # if str=~A and A in dict is False: -> False
             return False
-        elif '~' in str and val == True:    # if str=~A and A in dict is True:  -> True
+        elif '~' in str and val == True:  # if str=~A and A in dict is True:  -> True
             return True
-        elif val == False:                  # if str= A and A in dict is False: -> False
+        elif val == False:  # if str= A and A in dict is False: -> True
+            return True
+        elif val == True:  # if str= A and A in dict is True:  -> False
             return False
-        elif val == True:                   # if str= A and A in dict is True:  -> True
-            return True
 
-
-    def replaceKB(str,KB):
-    # replaces str in KB with ~str, returns updated KB
-        if '~' in str:                                                                  # if replace ~A
-            old_entry = str                # old entry that gets replaxed               # old = ~A
-            new_entry = str[-1]            # new entry that gets added                  # new = A
-        else:                                                                           # if replace A
-            old_entry =  str                # old entry that gets replaxed              # old = A
-            new_entry = '~' + str           # new entry that gets added                 # new = ~A
-        for k in KB:
-            if old_entry in KB[k] and '|' in KB[k]:
-                # if both sides have an issu
-                a=str.partition('|')[0]       # everything on the left
-                b=str.partition('|')[-1]      # everything on the right
-                # check if issue with respective part (save as var to save calc time)
-                is_Issue_a = isIssue(a)
-                is_Issue_b = isIssue(b)
-                if is_Issue_a and is_Issue_b:
+    def replaceKB(self, new_entry, KB):
+        # replaces ~str in KB with str, returns updated KB
+        if len(new_entry) > 3:
+            new_entry_a = new_entry.partition('|')[0]  # everything on the left
+            new_entry_b = new_entry.partition('|')[-1]
+            old_entry_a = '~' + new_entry_a
+            old_entry_a.replace('~~', '')
+            old_entry_b = '~' + new_entry_b
+            old_entry_b.replace('~~', '')
+            for k in len(KB):
+                if old_entry_a in KB[k] or old_entry_b in KB[k]:
                     KB.remove(KB[k])
                     KB.append(new_entry)
-            elif old_entry in KB[k]:
-                KB.remove(KB[k])
-                KB.append(new_entry)
-                if new_entry == str[-1]  :       # if replace ~A
-                    newBelief(new_entry, True)
-                elif new_entry == '~' + str:    # if replace A
-                    newBelief(old_entry, False)
+
+        if len(new_entry) < 3:  # if only one (negated) literal
+            # creates negation of input p                                                 # Example
+            old_entry = '~' + new_entry
+            old_entry.replace('~~', '')
+            for k in len(KB):
+
+                # ............... if KB[k] is OR statement ...............
+                if old_entry in KB[k] and '|' in KB[k]:  # KB = [A|B] new_entry : [~A]
+                    a = str.partition('|')[0]  # everything on the left
+                    b = str.partition('|')[-1]  # everything on the right
+                    # check if issue with respective part (save as var to save calc time)
+                    is_Issue_a = re.resolve(new_entry, a)  # ???
+                    is_Issue_b = re.resolve(new_entry, b)  # ???
+                    if is_Issue_a and is_Issue_b:
+                        # if two issus -> remove entire or statement, keep new_entry
+                        KB.remove(KB[k])
+                        KB.append(new_entry)
+                        di.updateDict(new_entry)
+                    if is_Issue_a and is_Issue_b == False:
+                        # if left issue -> keep right statement and new_entry
+                        KB.remove(KB[k])
+                        KB.append(b)
+                        di.updateDict(b)
+                        KB.append(new_entry)
+                        di.updateDict(new_entry)
+                    if is_Issue_a == False and is_Issue_b:
+                        # if right issue -> keep left statement and new_entry
+                        KB.remove(KB[k])
+                        KB.append(a)
+                        di.updateDict(a)
+                        KB.append(new_entry)
+                        di.updateDict(new_entry)
+
+                # ..... if KB[k] is only (negated) literal ...............
+                elif old_entry in KB[k]:
+                    KB.remove(KB[k])
+                    KB.append(new_entry)
+                    di.updateDict(new_entry)
+
+    def updateDict(new_entry):
+        if new_entry[0].isalpha():
+            newBelief(new_entry[0], True)
+        elif new_entry[0].isalpha() == false:
+            newBelief(new_entry[-1], False)

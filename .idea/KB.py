@@ -1,4 +1,5 @@
 import Dictionary
+import Contraction
 
 class KB:
 
@@ -6,7 +7,7 @@ class KB:
     # KB is a list
     # can be extended by extend('clause')
     # can be retracted by remove('clause')
-    KB = []
+    KB = ['~A', '~B', '~C']
 
 
     def get_sentence(self):
@@ -16,7 +17,7 @@ class KB:
         kb=KB()
         #print('input is', b)
         newbelief=kb.to_CNS(b)
-        print('newbelief in CNS-Format is: ',newbelief)
+        print('get_sentence: newbelief in CNS-Format is: ',newbelief)
         # if input includes AND -> more than one new belief
         if '&' in newbelief:
             splitted_newbeliefs = kb.seperate_ANDs(newbelief)
@@ -33,12 +34,16 @@ class KB:
         k = kb.KB #knowledgebase attribute
         i=0
         if new_belief in k:
-                print('Belief: ',new_belief, 'is already in KB, do nothing')
+                print('Ask_func: Belief: ',new_belief, 'is already in KB, do nothing')
         else:
-            kb.contraction(new_belief,k)
-         # should check for change-method before append
-             #k.append(new_belief)
-            print('belief added to KB: ',new_belief, 'New updated KB', k)
+            for i in range(len(k)):
+            # do resolution
+                # if problem
+                    # do contraction
+                Contraction.Contraction.contr(self, new_belief,k)
+                # if no problem append new_belief to KB
+                    #k.append(new_belief)
+            print('Ask_function: belief added to KB: ',new_belief, 'New updated KB', k)
 
 
     def contraction(self, newbelief, knowledgebase):
@@ -111,9 +116,9 @@ class KB:
             str= str.replace('^','&')
             str = str.replace('AND','&')
 
-        if 'v' in str or 'OR' in str:
+        if 'V' in str or 'OR' in str:
             # translate disjunction (OR)
-            str= str.replace('v','|')
+            str= str.replace('V','|')
             str= str.replace('OR','|')
             #print('String has an OR :',str)
 
@@ -161,8 +166,8 @@ while True:
     B=KB()
     B.get_sentence()
 
-
-#     kb = KB()                       # KB as class handle
+# import KB as kb
+#     #kb = KB()                       # KB as class handle
 #     conti = true
 #     while conti == true
 #     p = kb.tell()                   # Run tell method and get input from user
