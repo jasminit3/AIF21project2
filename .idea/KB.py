@@ -1,13 +1,9 @@
 import Dictionary
 import Contraction
-
+import numpy
 class KB:
 
-    # KB=['r'];
-    # KB is a list
-    # can be extended by extend('clause')
-    # can be retracted by remove('clause')
-    KB = ['~A', '~B', '~C']
+
 
 
     def get_sentence(self):
@@ -31,7 +27,7 @@ class KB:
     def ask(self, new_belief):
         kb= KB()
         new_belief
-        k = kb.KB #knowledgebase attribute
+        k = Dictionary.Dictionary.KB #knowledgebase attribute
         i=0
         if new_belief in k:
                 print('Ask_func: Belief: ',new_belief, 'is already in KB, do nothing')
@@ -40,7 +36,7 @@ class KB:
             # do resolution
                 # if problem
                     # do contraction
-                Contraction.Contraction.contr(self, new_belief,k)
+                Contraction.Contraction.contr(self, new_belief)
                 # if no problem append new_belief to KB
                     #k.append(new_belief)
             print('Ask_function: belief added to KB: ',new_belief, 'New updated KB', k)

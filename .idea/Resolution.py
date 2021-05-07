@@ -6,7 +6,7 @@ def resolve(A,B):
     literals_of_A = [i for i in A if i not in operations]
     literals_of_B = [i for i in B if i not in operations]
     
-    literals = set()
+    literals = set([])
     found_not = False
     for literal in literals_of_A:
         if found_not:

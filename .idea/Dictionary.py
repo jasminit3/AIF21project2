@@ -1,6 +1,11 @@
 
 class Dictionary:
 
+    # KB=['r'];
+    # KB is a list
+    # can be extended by extend('clause')
+    # can be retracted by remove('clause')
+    KB = ['~A', '~B', '~C']
 
     # logicDict = {
     #     'A': None,
@@ -15,9 +20,9 @@ class Dictionary:
     #     '~A|B':None,
     # }
     logicDict = {
-        'A': None,
-        'B': None,
-        'C': None
+        'A': False,
+        'B': False,
+        'C': False
     }
 
     def newBelief(self, NB, bool):
@@ -25,16 +30,16 @@ class Dictionary:
             Dictionary.logicDict[NB] = False
         else:
             Dictionary.logicDict[NB] = True
-        print('updated dict: ',Dictionary.logicDict)
+        print('dict: updated dict: ',Dictionary.logicDict)
 
     def getTruelogic(self, nb):
         #beliefs= []
-        print('received nb in gettruelogic', nb)
+        print('dict: received nb in gettruelogic', nb)
         x = Dictionary.logicDict[nb]
         #for nb in Dictionary.logicDict:
             #if Dictionary.logicDict[x]==True:
                 #beliefs.append(x)
-        print('True formulas', x)
+        print('dict: True formulas', x)
         return x
 
 #D = Dictionary()
