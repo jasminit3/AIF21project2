@@ -57,14 +57,15 @@ class Contraction:
                 old_a.replace('~~', '')
                 old_b = '~' + b
                 old_b.replace('~~', '')
-                for k in len(KB):
-                    if is_Issue_a and old_a in KB[k]:
+                for k in KB:
+                    x = KB.index(k)
+                    if is_Issue_a and old_a in KB[x]:
                         # if left issue -> replace left statement in KB
-                        KB.remove(KB[k])
+                        KB.remove(KB[x])
                         KB.append(new_entry)
-                    if is_Issue_b and old_b in KB[k]:
+                    if is_Issue_b and old_b in KB[x]:
                         # if right issue -> replace right statement in KB
-                        KB.remove(KB[k])
+                        KB.remove(KB[x])
                         KB.append(new_entry)
             # remove all dublicates in KB
             #KB = list(dict.fromkeys(KB))
@@ -93,6 +94,7 @@ class Contraction:
 
     def replaceKB(self, new_entry, KB):
         co = Contraction
+        re = Resolution
         # replaces ~str in KB with str, returns updated KB
         if len(new_entry) > 3:
             new_entry_a = new_entry.partition('|')[0]  # everything on the left
@@ -114,30 +116,30 @@ class Contraction:
                 x = KB.index(k)
                 # ............... if KB[k] is OR statement ...............
                 if old_entry in KB[x] and '|' in KB[x]:  # KB = [A|B] new_entry : [~A]
-                    a = str.partition('|')[0]  # everything on the left
-                    b = str.partition('|')[-1]  # everything on the right
+                    a = k.partition('|')[0]  # everything on the left
+                    b = k.partition('|')[-1]  # everything on the right
                     # check if issue with respective part (save as var to save calc time)
-                    is_Issue_a = re.resolve(new_entry, a)  # ???
-                    is_Issue_b = re.resolve(new_entry, b)  # ???
+                    is_Issue_a = not bool(re.resolve(new_entry, a))  # ???
+                    is_Issue_b = not bool(re.resolve(new_entry, b))  # ???
                     if is_Issue_a and is_Issue_b:
                         # if two issus -> remove entire or statement, keep new_entry
-                        KB.remove(KB[k])
+                        KB.remove(KB[x])
                         KB.append(new_entry)
-                        co.updateDict(new_entry)
+                        co.updateDict(self, new_entry)
                     if is_Issue_a and is_Issue_b == False:
                         # if left issue -> keep right statement and new_entry
-                        KB.remove(KB[k])
+                        KB.remove(KB[x])
                         KB.append(b)
-                        co.updateDict(b)
+                        co.updateDict(self, b)
                         KB.append(new_entry)
-                        co.updateDict(new_entry)
+                        co.updateDict(self, new_entry)
                     if is_Issue_a == False and is_Issue_b:
                         # if right issue -> keep left statement and new_entry
-                        KB.remove(KB[k])
+                        KB.remove(KB[x])
                         KB.append(a)
-                        co.updateDict(a)
+                        co.updateDict(self, a)
                         KB.append(new_entry)
-                        co.updateDict(new_entry)
+                        co.updateDict(self, new_entry)
 
                 # ..... if KB[k] is only (negated) literal ...............
                 elif old_entry in KB[x]:
@@ -148,5 +150,5 @@ class Contraction:
     def updateDict(self, new_entry):
         if new_entry[0].isalpha():
             Dictionary.Dictionary.newBelief(self, new_entry[0], True)
-        elif new_entry[0].isalpha() == false:
+        elif new_entry[0].isalpha() == False:
             Dictionary.Dictionary.newBelief(self, new_entry[-1], False)

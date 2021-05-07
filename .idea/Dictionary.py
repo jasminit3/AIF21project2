@@ -5,7 +5,7 @@ class Dictionary:
     # KB is a list
     # can be extended by extend('clause')
     # can be retracted by remove('clause')
-    KB = ['~A', '~B', '~C']
+    KB = ['~A', '~B', '~C', '~A|~B']
 
     # logicDict = {
     #     'A': None,

@@ -1,5 +1,6 @@
 import Dictionary
 import Contraction
+import Resolution
 import numpy
 class KB:
 
@@ -32,44 +33,48 @@ class KB:
         if new_belief in k:
                 print('Ask_func: Belief: ',new_belief, 'is already in KB, do nothing')
         else:
-            for i in range(len(k)):
-            # do resolution
-                # if problem
-                    # do contraction
-                Contraction.Contraction.contr(self, new_belief)
+            for i in k:
+                x = k.index(i)
+                # do resolution:
+                no_issue = bool(Resolution.resolve(new_belief, i))      # resolution returns empty set if an issue is detected -> bool(empty) = false
+                # if problem:
+                if no_issue == False:
+                    # do contraction:
+                    Contraction.Contraction.contr(self, new_belief)
+                k = list(dict.fromkeys(k))  # removes dublicates
                 # if no problem append new_belief to KB
                     #k.append(new_belief)
             print('Ask_function: belief added to KB: ',new_belief, 'New updated KB', k)
 
 
-    def contraction(self, newbelief, knowledgebase):
-        d = Dictionary.Dictionary() # dictionary object initialization
-        #t= d.getTruelogic(newbelief) #returns literals which is true from the dictionary into a variable, this is an array of true keys
-        #print('knowledgebase before contraction ',knowledgebase, 'newbelief before contraction', newbelief, 'True literals in the dictionary', t)
-        negated = '~'+ newbelief
-        not_negated = newbelief.partition('~')[-1]
-        print('not negated term', not_negated)
-        #print('not negated input',not_negated)
-        if newbelief and negated in knowledgebase:
-            KB.KB.remove(negated)
-            KB.KB.append(newbelief)
-            t= d.getTruelogic(newbelief) #returns literals which is true from the dictionary into a variable, this is an array of true keys
-            print('knowledgebase before contraction ',knowledgebase, 'newbelief before contraction', newbelief, 'True literals in the dictionary', t)
-            d.newBelief(newbelief, True)
-        elif newbelief and not_negated in knowledgebase :
-             t= d.getTruelogic(not_negated)
-             print('get true value from dict not negated', t)
-             KB.KB.remove(not_negated)
-             KB.KB.append(newbelief)
-             d.newBelief(not_negated, False)
-        elif newbelief not in knowledgebase:
-             if '~' in newbelief and d.logicDict[not_negated] == None:
-                d.newBelief(not_negated, False)
-                KB.KB.append(newbelief)
-             else:
-                KB.KB.append(newbelief)
-                d.newBelief(newbelief, True)
-        print('updated Knowledgebase ', KB.KB)
+    # def contraction(self, newbelief, knowledgebase):
+    #     d = Dictionary.Dictionary() # dictionary object initialization
+    #     #t= d.getTruelogic(newbelief) #returns literals which is true from the dictionary into a variable, this is an array of true keys
+    #     #print('knowledgebase before contraction ',knowledgebase, 'newbelief before contraction', newbelief, 'True literals in the dictionary', t)
+    #     negated = '~'+ newbelief
+    #     not_negated = newbelief.partition('~')[-1]
+    #     print('not negated term', not_negated)
+    #     #print('not negated input',not_negated)
+    #     if newbelief and negated in knowledgebase:
+    #         KB.KB.remove(negated)
+    #         KB.KB.append(newbelief)
+    #         t= d.getTruelogic(newbelief) #returns literals which is true from the dictionary into a variable, this is an array of true keys
+    #         print('knowledgebase before contraction ',knowledgebase, 'newbelief before contraction', newbelief, 'True literals in the dictionary', t)
+    #         d.newBelief(newbelief, True)
+    #     elif newbelief and not_negated in knowledgebase :
+    #          t= d.getTruelogic(not_negated)
+    #          print('get true value from dict not negated', t)
+    #          KB.KB.remove(not_negated)
+    #          KB.KB.append(newbelief)
+    #          d.newBelief(not_negated, False)
+    #     elif newbelief not in knowledgebase:
+    #          if '~' in newbelief and d.logicDict[not_negated] == None:
+    #             d.newBelief(not_negated, False)
+    #             KB.KB.append(newbelief)
+    #          else:
+    #             KB.KB.append(newbelief)
+    #             d.newBelief(newbelief, True)
+    #     print('updated Knowledgebase ', KB.KB)
 
 
     def to_CNS(self, input):

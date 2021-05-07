@@ -36,6 +36,7 @@ def resolve(A,B):
 
     resolved = copy.deepcopy(literals)
     for literal in literals:
+        # negation of literal
         if len(literal) == 2:
             literal = literal[1]
         else:
