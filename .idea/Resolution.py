@@ -2,11 +2,11 @@ import copy
 
 def resolve(A,B):
 
-    operations = {'&', '|'}
+    operations = {'|'}
     literals_of_A = [i for i in A if i not in operations]
     literals_of_B = [i for i in B if i not in operations]
     
-    literals = set([])
+    literals = set()
     found_not = False
     for literal in literals_of_A:
         if found_not:
@@ -36,7 +36,6 @@ def resolve(A,B):
 
     resolved = copy.deepcopy(literals)
     for literal in literals:
-        # negation of literal
         if len(literal) == 2:
             literal = literal[1]
         else:
@@ -50,10 +49,16 @@ def resolve(A,B):
                     resolved.remove('~' + literal)
             except KeyError:
                 pass
-    return resolved
+    
+    string = str()
+    for item in resolved:
+        string += item + '|'
+    string = string[:-1]
+    
+    return string
 
 if __name__ == "__main__":
     statement1 = 'p|q'
-    statement2 = '~p|~q'
+    statement2 = 'p'
     resolved = resolve(statement1, statement2)
     print(resolved)
