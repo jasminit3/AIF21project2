@@ -1,6 +1,7 @@
 import Dictionary
 import Contraction
 import Resolution
+import Dictionary
 import numpy
 class KB:
 
@@ -19,7 +20,8 @@ class KB:
         if '&' in newbelief:
             splitted_newbeliefs = kb.seperate_ANDs(newbelief)
             for i in range(len(splitted_newbeliefs)):
-                newbelief = splitted_newbeliefs[i]
+                newbelief1 = splitted_newbeliefs[i]
+                kb.ask(newbelief1)
                 kb.ask(newbelief)
         else:
             kb.ask(newbelief)
@@ -34,17 +36,17 @@ class KB:
                 print('Ask_func: Belief: ',new_belief, 'is already in KB, do nothing')
         else:
             for i in k:
-                x = k.index(i)
+                #x = k.index(i)
                 # do resolution:
-                no_issue = bool(Resolution.resolve(new_belief, i))      # resolution returns empty set if an issue is detected -> bool(empty) = false
+                #no_issue = bool(Resolution.resolve(new_belief, i))      # resolution returns empty set if an issue is detected -> bool(empty) = false
                 # if problem:
-                if no_issue == False:
+                #if no_issue == False:
                     # do contraction:
-                    Contraction.Contraction.contr(self, new_belief)
+                Contraction.Contraction.contr(self, new_belief)
                 k = list(dict.fromkeys(k))  # removes dublicates
                 # if no problem append new_belief to KB
                     #k.append(new_belief)
-            print('Ask_function: belief added to KB: ',new_belief, 'New updated KB', k)
+                print('Ask_function: belief added to KB: ',new_belief, 'New updated KB', k)
 
 
     # def contraction(self, newbelief, knowledgebase):
@@ -161,7 +163,8 @@ class KB:
             str = str.partition('&')[-1]                    # everything on the right -> look for additional '&'
         statements.append(str)                              # rest of the original statement -> last statement
         return (statements)
-
+    def makeMethod(self, k):
+        print('I dont do anything',k)
 
 while True:
     B=KB()

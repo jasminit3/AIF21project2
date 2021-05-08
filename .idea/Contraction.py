@@ -22,19 +22,18 @@ class Contraction:
     def contr(self, new_entry):
         # function contracts KB in a way that p can be appended to KB without conflicts
         co = Contraction
-        di = Dictionary.Dictionary
+        #di = Dictionary.Dictionary
         re = Resolution
-        KB = di.KB
+        KB = Dictionary.Dictionary.KB
         if len(new_entry) < 3:  # if only one (negated) literal
             # checks if issue with dictonary -> obsolete bc resolution?
             if co.isIssue(self, new_entry):
                 print("Contraction: KB: ", KB, " gets updated with singe literal a: ", new_entry)
-                KB = co.replaceKB(self, new_entry, KB)
+                co.replaceKB(self, new_entry, KB)
                 print('Contraction: updated KB is: ', KB)
             # remove all dublicates in KB
             #KB = list(dict.fromkeys(KB))
             return (KB)
-
         if '|' in new_entry:
             # replacement with input with OR operator
             a = new_entry.partition('|')[0]  # everything on the left
@@ -47,7 +46,7 @@ class Contraction:
                 # check which one is better to replace
                 # KB = replaceKB( lowerPrio(a,b),KB) # needs function to determine variable with lower priority
                 print('Contraction: KB: ', KB, ' gets contracted with b: ', b)
-                KB = co.replaceKB(self, b, KB)
+                co.replaceKB(self, b, KB)
                 print('Contraction: updated KB is: ', KB)
             else:
                 # simplyfy KB accordingly
@@ -70,13 +69,8 @@ class Contraction:
             # remove all dublicates in KB
             #KB = list(dict.fromkeys(KB))
             print('Contraction: updated KB is: ', KB)
-            return (KB)
-        else:
-            KB.append(p)
-            print('Contranction: added p to WB, but WHY WHY WHY??? this else should not be executed')
-            # remove all dublicates in KB
-            #KB = list(dict.fromkeys(KB))
-            return (KB)
+            return KB
+
 
     def isIssue(self, str):
         # checks if there is an issue between literal in str and current belief (saved in dict)
@@ -93,6 +87,7 @@ class Contraction:
             return False
 
     def replaceKB(self, new_entry, KB):
+        K = Dictionary.Dictionary.KB
         co = Contraction
         re = Resolution
         # replaces ~str in KB with str, returns updated KB
@@ -103,19 +98,20 @@ class Contraction:
             old_entry_a.replace('~~', '')
             old_entry_b = '~' + new_entry_b
             old_entry_b.replace('~~', '')
-            for k in len(KB):
-                if old_entry_a in KB[k] or old_entry_b in KB[k]:
-                    KB.remove(KB[k])
-                    KB.append(new_entry)
+            for k in len(K):
+                if old_entry_a in K[k] or old_entry_b in K[k]:
+                    K.remove(K[k])
+                    K.append(new_entry)
 
         if len(new_entry) < 3:  # if only one (negated) literal
             # creates negation of input p                                                 # Example
             old_entry = '~' + new_entry
-            old_entry.replace('~~', '')
-            for k in KB:
-                x = KB.index(k)
+            old_entry =old_entry.replace('~~', '')
+            print('Replace kb: new entry ', new_entry, 'old entry',old_entry)
+            for k in K:
+                x = K.index(k)
                 # ............... if KB[k] is OR statement ...............
-                if old_entry in KB[x] and '|' in KB[x]:  # KB = [A|B] new_entry : [~A]
+                if old_entry in K[x] and '|' in K[x]:  # KB = [A|B] new_entry : [~A]
                     a = k.partition('|')[0]  # everything on the left
                     b = k.partition('|')[-1]  # everything on the right
                     # check if issue with respective part (save as var to save calc time)
@@ -123,29 +119,32 @@ class Contraction:
                     is_Issue_b = not bool(re.resolve(new_entry, b))  # ???
                     if is_Issue_a and is_Issue_b:
                         # if two issus -> remove entire or statement, keep new_entry
-                        KB.remove(KB[x])
-                        KB.append(new_entry)
+                        K.remove(K[x])
+                        K.append(new_entry)
                         co.updateDict(self, new_entry)
                     if is_Issue_a and is_Issue_b == False:
                         # if left issue -> keep right statement and new_entry
-                        KB.remove(KB[x])
-                        KB.append(b)
+                        K.remove(K[x])
+                        K.append(b)
                         co.updateDict(self, b)
-                        KB.append(new_entry)
+                        K.append(new_entry)
                         co.updateDict(self, new_entry)
                     if is_Issue_a == False and is_Issue_b:
                         # if right issue -> keep left statement and new_entry
-                        KB.remove(KB[x])
-                        KB.append(a)
+                        K.remove(K[x])
+                        K.append(a)
                         co.updateDict(self, a)
-                        KB.append(new_entry)
+                        K.append(new_entry)
                         co.updateDict(self, new_entry)
 
                 # ..... if KB[k] is only (negated) literal ...............
-                elif old_entry in KB[x]:
-                    KB.remove(k)
-                    KB.append(new_entry)
+                elif old_entry in K[x]:
+                    K.remove(k)
+                    print('Remove old string', k)
+                    K.append(new_entry)
+                    print('New literal: ',new_entry,'new KB is:', Dictionary.Dictionary.KB)
                     co.updateDict(self, new_entry)
+
 
     def updateDict(self, new_entry):
         if new_entry[0].isalpha():
