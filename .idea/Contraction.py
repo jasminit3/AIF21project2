@@ -114,6 +114,7 @@ class Contraction:
                 if old_entry in K[x] and '|' in K[x]:  # KB = [A|B] new_entry : [~A]
                     a = k.partition('|')[0]  # everything on the left
                     b = k.partition('|')[-1]  # everything on the right
+                    print('replace a: ',a,'b: ',b)
                     # check if issue with respective part (save as var to save calc time)
                     is_Issue_a = not bool(re.resolve(new_entry, a))  # ???
                     is_Issue_b = not bool(re.resolve(new_entry, b))  # ???
