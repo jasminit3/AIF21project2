@@ -53,7 +53,7 @@ class Contraction:
                 print('Contraction: KB: ', KB, ' gets contracted with b: ', b)
                 co.replaceKB(self, b, KB)
                 print('Contraction: updated KB is: ', KB)
-            if is_Issue_a == False and is_Issue_b==False:
+            if is_Issue_a == False and is_Issue_b==False: # if both literals are true and already in KB, replaced with A|B
                     KB.remove(a)
                     KB.remove(b)
                     KB.append(new_entry)
