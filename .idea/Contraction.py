@@ -38,24 +38,34 @@ class Contraction:
             # replacement with input with OR operator
             a = new_entry.partition('|')[0]  # everything on the left
             b = new_entry.partition('|')[-1]  # everything on the right
+            old_a = '~' + a
+            old_a.replace('~~', '')
+            old_b = '~' + b
+            old_b.replace('~~', '')
             # check if issue with respective part (save as var to save calc time) -> obsolete bc resolution?
             is_Issue_a = co.isIssue(self, a)
             is_Issue_b = co.isIssue(self, b)
             # replace the corresponding part of KB
-            if is_Issue_a and is_Issue_b:
+            print('isisue a', is_Issue_a,'isisue b', is_Issue_b)
+            if is_Issue_a and is_Issue_b :
                 # check which one is better to replace
                 # KB = replaceKB( lowerPrio(a,b),KB) # needs function to determine variable with lower priority
                 print('Contraction: KB: ', KB, ' gets contracted with b: ', b)
                 co.replaceKB(self, b, KB)
                 print('Contraction: updated KB is: ', KB)
+            if is_Issue_a == False and is_Issue_b==False:
+                    KB.remove(a)
+                    KB.remove(b)
+                    KB.append(new_entry)
+                    print('KB:', KB,'new entry', new_entry)
             else:
                 # simplyfy KB accordingly
                 print('Contraction: KB: ', KB, ' gets simplified with b: ', b)
                 # negations of a and b
-                old_a = '~' + a
-                old_a.replace('~~', '')
-                old_b = '~' + b
-                old_b.replace('~~', '')
+                # old_a = '~' + a
+                # old_a.replace('~~', '')
+                # old_b = '~' + b
+                # old_b.replace('~~', '')
                 for k in KB:
                     x = KB.index(k)
                     if is_Issue_a and old_a in KB[x]:
@@ -66,6 +76,7 @@ class Contraction:
                         # if right issue -> replace right statement in KB
                         KB.remove(KB[x])
                         KB.append(new_entry)
+
             # remove all dublicates in KB
             #KB = list(dict.fromkeys(KB))
             print('Contraction: updated KB is: ', KB)
