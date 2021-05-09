@@ -4,9 +4,7 @@ from time import sleep
 
 class Resolution:
     def negate(self, Formula):
-        
         formula = Formula.split(sep = '|')
-    
         negated_formula = []
         for literal in formula:
             if len(literal) == 2:
@@ -18,8 +16,8 @@ class Resolution:
         return negated_formula
 
     def resolveKB(self, KB, alpha):
-
-        negated_alpha = self.negate(alpha)
+        re= Resolution
+        negated_alpha = re.negate(self, alpha)
         clauses = KB
         clauses_set = set(KB)
         if set(negated_alpha).issubset(clauses_set):
@@ -37,7 +35,7 @@ class Resolution:
                     #print(Ci_ind, Cj_ind)
                     Ci, Cj = clauses[Ci_ind], clauses[Cj_ind]
                     #print(Ci, Cj)
-                    resolvents = self.resolve(Ci, Cj)
+                    resolvents = re.resolve(self, Ci, Cj)
                     #print(resolvents)
                     if str() == resolvents:
                         return True

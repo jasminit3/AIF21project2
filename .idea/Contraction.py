@@ -87,9 +87,9 @@ class Contraction:
             new_entry_b = new_entry.partition('|')[-1]  # everything on the right
             # negate new_entrys
             old_entry_a = '~' + new_entry_a
-            old_entry_a.replace('~~','')
+            old_entry_a = old_entry_a.replace('~~','')
             old_entry_b = '~' + new_entry_b
-            old_entry_b.replace('~~','')
+            old_entry_b = old_entry_b.replace('~~','')
             # check for left half if conflict with dict
             aIssue = co.isIssue(self, new_entry_a)
             bIssue = co.isIssue(self, new_entry_b)
@@ -101,7 +101,7 @@ class Contraction:
                 low_prio = input()
                 print(low_prio)
                 # check input
-                while low_prio != old_entry_a or low_prio != old_entry_b:
+                while low_prio != old_entry_a and low_prio != old_entry_b:
                     print("Please check spelling of literal that should be replaced: ", old_entry_a,"or", old_entry_b,": ")
                     low_prio = input()
 
@@ -111,7 +111,7 @@ class Contraction:
                         KB.remove(k)
                         # negate low_prio
                         low_prio_neg = '~' + low_prio
-                        low_prio_neg.replace('~~','')
+                        low_prio_neg = low_prio_neg.replace('~~','')
                         co.updateDict(self, new_entry_a)
 
                     elif k == old_entry_a + '|' + old_entry_b or k == new_entry_a + '|' + old_entry_b or k == new_entry_a + '|' + new_entry_b:

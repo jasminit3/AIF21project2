@@ -34,22 +34,24 @@ class KB:
         i=0
         if new_belief in k:
                 print('Ask_func: Belief: ',new_belief, 'is already in KB, do nothing')
+        elif Resolution.Resolution.resolveKB(self, k, new_belief):
+            # do resolution:
+            # if true -> issue with new belief -> call contraction
+            Contraction.Contraction.contract(self, new_belief)
+            k = list(dict.fromkeys(k))  # removes dublicates
+            # if no problem append new_belief to KB
+                #k.append(new_belief)
+            print('Ask_function: belief added to KB: ',new_belief, 'New updated KB', k)
         else:
-            for i in k:
-                #x = k.index(i)
-                # do resolution:
-                #no_issue = bool(Resolution.resolve(new_belief, i))      # resolution returns empty set if an issue is detected -> bool(empty) = false
-                # if problem:
-                #if no_issue == False:
-                    # do contraction:
-                Contraction.Contraction.contr(self, new_belief)
-                k = list(dict.fromkeys(k))  # removes dublicates
-                # if no problem append new_belief to KB
-                    #k.append(new_belief)
-                print('Ask_function: belief added to KB: ',new_belief, 'New updated KB', k)
+            Dictionary.Dictionary.KB.append(new_belief)
+            if new_belief[0].isalpha():
+                Dictionary.Dictionary.newBelief(self, new_belief[0], True)
+            elif new_belief[0].isalpha() == False:
+                Dictionary.Dictionary.newBelief(self, new_belief[-1], False)
+            print('Ask_function: updated KB is : ', k)
 
 
-    # def contraction(self, newbelief, knowledgebase):
+# def contraction(self, newbelief, knowledgebase):
     #     d = Dictionary.Dictionary() # dictionary object initialization
     #     #t= d.getTruelogic(newbelief) #returns literals which is true from the dictionary into a variable, this is an array of true keys
     #     #print('knowledgebase before contraction ',knowledgebase, 'newbelief before contraction', newbelief, 'True literals in the dictionary', t)
