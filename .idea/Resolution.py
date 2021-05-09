@@ -1,64 +1,108 @@
 import copy
+from itertools import product, chain
+from time import sleep
 
-def resolve(A,B):
-
-    operations = {'|'}
-    literals_of_A = [i for i in A if i not in operations]
-    literals_of_B = [i for i in B if i not in operations]
+class Resolution:
+    def negate(self, Formula):
+        
+        formula = Formula.split(sep = '|')
     
-    literals = set()
-    found_not = False
-    for literal in literals_of_A:
-        if found_not:
-            literals.add("~" + str(literal))
-        if literal == "~":
-            found_not = True
-            continue
-        else:
-            if found_not:
-                found_not = False
+        negated_formula = []
+        for literal in formula:
+            if len(literal) == 2:
+                literal = literal[1]
             else:
-                literals.add(literal)
+                literal = '~' + literal
+            negated_formula.append(literal)
+
+        return negated_formula
+
+    def resolveKB(self, KB, alpha):
+
+        negated_alpha = self.negate(alpha)
+        clauses = KB
+        clauses_set = set(KB)
+        if set(negated_alpha).issubset(clauses_set):
+            return True
+        [clauses.append(item) for item in negated_alpha]
+        new = []
+        new_set = set()
+        iteration = 0
+
+        while True:
+
+            #print(clauses)
+            for Ci_ind in range(len(clauses)):
+                for Cj_ind in range(Ci_ind + 1, len(clauses)):
+                    #print(Ci_ind, Cj_ind)
+                    Ci, Cj = clauses[Ci_ind], clauses[Cj_ind]
+                    #print(Ci, Cj)
+                    resolvents = self.resolve(Ci, Cj)
+                    #print(resolvents)
+                    if str() == resolvents:
+                        return True
+                    if resolvents not in new_set: 
+                        new.append(resolvents)
+                        new_set.add(resolvents)
+            if new_set.issubset(clauses_set):
+                return False
+            [clauses.append(item) for item in new if item not in clauses_set]
+            [clauses_set.add(item) for item in new]
+            iteration += 1 
     
-    found_not = False
-    for literal in literals_of_B:
-        if found_not:
-            literals.add("~" + str(literal))
-        if literal == "~":
-            found_not = True
-            continue
-        else:
-            if found_not:
-                found_not = False
+    def resolve(self, A,B):
+
+        statements = sorted([A.split(sep = '|'), B.split(sep = '|')], key = lambda x: len(x))
+
+        resolved = copy.deepcopy(statements)
+        for literal in statements[0]:
+            if len(literal) == 2:
+                neg_literal = literal[1]
             else:
-                literals.add(literal)
+                neg_literal = '~' + literal             
+            if neg_literal in statements[1]:
+                try:
+                    resolved[0].remove(literal)
+                    resolved[1].remove(neg_literal)
+                except ValueError:
+                    pass
+        
+        resolved = list(chain(*resolved))
+        resolved = set(resolved)
+        resolved = '|'.join(resolved)
+        return resolved
 
+    def resolvepossibilities(self, A,B):
 
-    resolved = copy.deepcopy(literals)
-    for literal in literals:
-        if len(literal) == 2:
-            literal = literal[1]
-        else:
-            literal = '~' + literal
-        if literal in literals:
-            try:
-                resolved.remove(literal)
-                if len(literal) == 2:
-                    resolved.remove(literal[1])
-                else:
-                    resolved.remove('~' + literal)
-            except KeyError:
-                pass
-    
-    string = str()
-    for item in resolved:
-        string += item + '|'
-    string = string[:-1]
-    
-    return string
+        statements = sorted([A.split(sep = '|'), B.split(sep = '|')], key = lambda x: len(x))
+
+        possibilities = []
+        for literal in statements[0]:
+            resolved = copy.deepcopy(statements)
+            if len(literal) == 2:
+                neg_literal = literal[1]
+            else:
+                neg_literal = '~' + literal             
+            if neg_literal in statements[1]:
+                resolved[0].remove(literal)
+                resolved[1].remove(neg_literal)
+                sentence = resolved[0]
+                for item in resolved[1]:
+                    sentence.append(item)
+                possibilities.append(sentence)
+
+        possibilities = [set(item) for item in possibilities]
+        possibilities = ['|'.join(item) for item in possibilities]
+                    
+        return possibilities
 
 if __name__ == "__main__":
     statement1 = 'p|q'
-    statement2 = 'p'
-    resolved = resolve(statement1, statement2)
-    print(resolved)
+    statement2 = '~q|p'
+    resolution = Resolution()
+    resolved = resolution.resolve(statement1, statement2)
+    print(str() == resolved)
+    KB = ['p|q', '~q|p', '~p|r', '~p|s']
+    alpha = 's'
+    result = resolution.resolveKB(KB, alpha)
+    print(result)
