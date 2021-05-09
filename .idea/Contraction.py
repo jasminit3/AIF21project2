@@ -116,6 +116,7 @@ class Contraction:
 
                     elif k == old_entry_a + '|' + old_entry_b or k == new_entry_a + '|' + old_entry_b or k == new_entry_a + '|' + new_entry_b:
                         # if OR-statement is found in KB (with conflict on one or two sides) -> remove it
+                        ('This should be removed from KB', k)
                         KB.remove(k)
 
            # return updated KB in the end
@@ -130,11 +131,12 @@ class Contraction:
         old_entry = '~' + new_entry
         old_entry = old_entry.replace('~~','')
         # delete old entry in KB
-        KB.remove(old_entry)
+        Dictionary.Dictionary.KB.remove(old_entry)
         # add new entry
-        KB.append(new_entry)
+        Dictionary.Dictionary.KB.append(new_entry)
         # update Dicionary
         Contraction.updateDict(self, new_entry)
+        KB=Dictionary.Dictionary.KB
         return (KB)
 
 
