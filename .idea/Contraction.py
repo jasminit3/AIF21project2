@@ -45,7 +45,7 @@ class Contraction:
         if len(new_entry) < 3:
             # negate new_entry
             old_entry = '~' + new_entry
-            old_entry.replace('~~','')
+            old_entry = old_entry.replace('~~','')
             # check if new_entry has conflickt with dictionary
             if co.isIssue(self, new_entry):
                 print("Contraction: single literal in KB: ", KB, " gets updated with singe literal a: ", new_entry)
@@ -97,10 +97,13 @@ class Contraction:
             if aIssue and bIssue:
                 # conflict on both sides w/ dict -> ask user for prio input
                 # solution wih least changes would also be nice
-                low_prio = input("Please specify literal that should be replaced: ", old_entry_a,"or", old_entry_b,": ")
+                print("Please specify literal that should be replaced: ", old_entry_a,"or", old_entry_b,": ")
+                low_prio = input()
+                print(low_prio)
                 # check input
                 while low_prio != old_entry_a or low_prio != old_entry_b:
-                    low_prio = input("Please check spelling of literal that should be replaced: ", old_entry_a,"or", old_entry_b,": ")
+                    print("Please check spelling of literal that should be replaced: ", old_entry_a,"or", old_entry_b,": ")
+                    low_prio = input()
 
                 for k in KB:
                     if k == low_prio:
@@ -125,13 +128,13 @@ class Contraction:
         # replaces a single literal with another single literal (both can be negated)
         # negate new_entry
         old_entry = '~' + new_entry
-        old_entry.replace('~~','')
+        old_entry = old_entry.replace('~~','')
         # delete old entry in KB
         KB.remove(old_entry)
         # add new entry
         KB.append(new_entry)
         # update Dicionary
-        co.updateDict(self, new_entry)
+        Contraction.updateDict(self, new_entry)
         return (KB)
 
 
