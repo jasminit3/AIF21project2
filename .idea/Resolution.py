@@ -15,8 +15,11 @@ class Resolution:
 
         return negated_formula
 
-    def resolveKB(self, KB, alpha):
+    def resolveKB(self, KnB, Formula):
         re= Resolution
+        KB = copy.deepcopy(KnB)
+        alpha = copy.deepcopy(Formula)
+        
         negated_alpha = re.negate(self, alpha)
         clauses = KB
         clauses_set = set(KB)
