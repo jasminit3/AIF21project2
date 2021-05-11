@@ -23,8 +23,6 @@ class Resolution:
         negated_alpha = re.negate(self, alpha)
         clauses = KB
         clauses_set = set(KB)
-        if set(negated_alpha).issubset(clauses_set):
-            return True
         [clauses.append(item) for item in negated_alpha]
         new = []
         new_set = set()
