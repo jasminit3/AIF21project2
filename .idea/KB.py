@@ -34,14 +34,15 @@ class KB:
         i=0
         if new_belief in k:
                 print('Ask_func: Belief: ',new_belief, 'is already in KB, do nothing')
-        elif Resolution.Resolution.resolveKB(self, k, new_belief)==True:
+        elif Resolution.Resolution.resolveKB(self, k, new_belief)==False:
             # do resolution:
             # if true -> issue with new belief -> call contraction
             k= Contraction.Contraction.contract(self, new_belief)
 
             # if no problem append new_belief to KB
                 #k.append(new_belief)
-            print('Ask_function: belief added to KB: ',new_belief, 'New updated KB', k)
+            Dictionary.Dictionary.KB = list(dict.fromkeys(Dictionary.Dictionary.KB))
+            print('Ask_function: belief added to KB: ',new_belief, 'New updated KB', Dictionary.Dictionary.KB)
         else :#Resolution.Resolution.resolveKB(self, k, new_belief)==False:
             #Some isues we have to check what is actually
             Dictionary.Dictionary.KB.append(new_belief)
@@ -49,6 +50,7 @@ class KB:
                 Dictionary.Dictionary.newBelief(self, new_belief[0], True)
             elif new_belief[0].isalpha() == False:
                 Dictionary.Dictionary.newBelief(self, new_belief[-1], False)
+            Dictionary.Dictionary.KB = list(dict.fromkeys(Dictionary.Dictionary.KB))
             print('Ask_function: updated KB is : ', Dictionary.Dictionary.KB)
 
 

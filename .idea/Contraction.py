@@ -119,10 +119,32 @@ class Contraction:
                         ('This should be removed from KB', k)
                         KB.remove(k)
 
-           # return updated KB in the end
+         #check if KB has three entries
+        KB = co.checkKB(self, KB)
+        # return updated KB in the end
         print('Contraction: updated KB is: ', KB)
         return (KB)
 
+    def checkKB(self, KB):
+        if len(KB) < 3:
+            # removed literals imply that the opposite is true
+            dict = Dictionary.Dictionary
+            if 'A' not in KB and '~A' not in KB:
+                if dict.getTruelogic(self, 'A'):  # gets bool value of literal
+                    KB.append('A')
+                else:
+                    KB.append('~A')
+            if 'B' not in KB and '~B' not in KB:
+                if dict.getTruelogic(self, 'B'):  # gets bool value of literal
+                    KB.append('B')
+                else:
+                    KB.append('~B')
+            if 'C' not in KB and '~C' not in KB:
+                if dict.getTruelogic(self, 'C'):  # gets bool value of literal
+                    KB.append('C')
+                else:
+                    KB.append('~C')
+        return KB
 
 
     def replaceLiteral(self, new_entry, KB):
