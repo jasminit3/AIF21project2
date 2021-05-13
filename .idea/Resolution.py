@@ -1,9 +1,12 @@
 import copy
-from itertools import product, chain
-from time import sleep
+from itertools import chain
 
 class Resolution:
-    def negate(self, Formula):
+    """Resolution class used to perform the resolution algorithm by internally using a resolution graph"""
+
+    def _negate(self, Formula):
+        """This function is used to negate the formula that is to be checked using resolution"""
+        
         formula = Formula.split(sep = '|')
         negated_formula = []
         for literal in formula:
@@ -16,40 +19,63 @@ class Resolution:
         return negated_formula
 
     def resolveKB(self, KnB, Formula):
+        """Takes the entire knowledge base and the formula in CNF form for the logical entailment check"""
+        # Note : Assumes the formula is always a clause.(i.e in cnf format without spaces)
+        # Here, the function operates on multiple literals and multiple sentences.
         re= Resolution
         KB = copy.deepcopy(KnB)
-        alpha = copy.deepcopy(Formula)
-        
-        negated_alpha = re.negate(self, alpha)
-        clauses = KB
-        clauses_set = set(KB)
-        [clauses.append(item) for item in negated_alpha]
-        new = []
-        new_set = set()
-        iteration = 0
+        formula = copy.deepcopy(Formula)
+        formula = formula.replace(' ', '')
+        if '&' in formula:
+            formula = formula.split(sep = '&')
 
-        while True:
+        logical_entailment = []
+        for alpha in formula:
+            negated_alpha = re._negate(self, alpha)
+            clauses = KB
+            clauses_set = set(KB)
+            [clauses.append(item) for item in negated_alpha]
+            new = []
+            new_set = set()
+            entails = False
+            iteration = 0
 
-            #print(clauses)
-            for Ci_ind in range(len(clauses)):
-                for Cj_ind in range(Ci_ind + 1, len(clauses)):
-                    #print(Ci_ind, Cj_ind)
-                    Ci, Cj = clauses[Ci_ind], clauses[Cj_ind]
-                    #print(Ci, Cj)
-                    resolvents = re.resolve(self, Ci, Cj)
-                    #print(resolvents)
-                    if str() == resolvents:
-                        return True
-                    if resolvents not in new_set: 
-                        new.append(resolvents)
-                        new_set.add(resolvents)
-            if new_set.issubset(clauses_set):
-                return False
-            [clauses.append(item) for item in new if item not in clauses_set]
-            [clauses_set.add(item) for item in new]
-            iteration += 1 
+            while True:
+
+                #print(clauses)
+                for Ci_ind in range(len(clauses)):
+                    for Cj_ind in range(Ci_ind + 1, len(clauses)):
+                        #print(Ci_ind, Cj_ind)
+                        Ci, Cj = clauses[Ci_ind], clauses[Cj_ind]
+                        #print(Ci, Cj)
+                        resolvents = re._resolve(self, Ci, Cj)
+                        #print(resolvents)
+                        if str() == resolvents:
+                            entails = True
+                        if resolvents not in new_set: 
+                            new.append(resolvents)
+                            new_set.add(resolvents)
+                if entails:
+                    break
+                if new_set.issubset(clauses_set):
+                    entails = False
+                    break
+                [clauses.append(item) for item in new if item not in clauses_set]
+                [clauses_set.add(item) for item in new]
+                iteration += 1
+            
+            logical_entailment.append(entails)
+
+        # print(logical_entailment)
+        if all(logical_entailment):
+            return True
+        else:
+            return False 
     
-    def resolve(self, A,B):
+    def _resolve(self, A,B):
+        """This function takes two clauses as input and returns the resolved clause if resolution can be applied."""
+        # Note: This function fuses the clauses using logical OR if they cannot be resolved. This is because the function never sees a logical AND
+        # as per this implementation.
 
         statements = sorted([A.split(sep = '|'), B.split(sep = '|')], key = lambda x: len(x))
 
@@ -71,8 +97,8 @@ class Resolution:
         resolved = '|'.join(resolved)
         return resolved
 
-    def resolvepossibilities(self, A,B):
-
+    def _resolvepossibilities(self, A,B):
+        """Used as a test function, it return all the possibilities for resolving clauses A and B."""
         statements = sorted([A.split(sep = '|'), B.split(sep = '|')], key = lambda x: len(x))
 
         possibilities = []
@@ -96,12 +122,14 @@ class Resolution:
         return possibilities
 
 if __name__ == "__main__":
+    # Write the code to test the working of this module of the belief revision agent, a template has been provided below.
+    resolution = Resolution()
     statement1 = 'p|q'
     statement2 = '~q|p'
-    resolution = Resolution()
-    resolved = resolution.resolve(statement1, statement2)
-    print(str() == resolved)
+    resolved = resolution._resolve(statement1, statement2) # Do not use this function outside this module as it may not give preferable results
+    print("statement 1 = {}\tstatement 2 = {}\tresolved = {}".format(statement1, statement2, resolved))
     KB = ['p|q', '~q|p', '~p|r', '~p|s']
-    alpha = 's'
+    alpha = 'p & r|q|e & s'
     result = resolution.resolveKB(KB, alpha)
-    print(result)
+    print('\nKB = ', KB)
+    print("Formula = ",alpha, "\nLogically entails the KB?\n", result)
