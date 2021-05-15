@@ -29,8 +29,3 @@ class Dictionary:
                 #beliefs.append(x)
         print('dict: True formulas', x)
         return x
-
-#D = Dictionary()
-#D.newBelief('A')
-#x= D.getTruelogic()
-#print('x returned', x)
