@@ -22,7 +22,7 @@ class KB:
             for i in range(len(splitted_newbeliefs)):
                 newbelief1 = splitted_newbeliefs[i]
                 kb.ask(newbelief1)
-                kb.ask(newbelief)
+                #kb.ask(newbelief)
         else:
             kb.ask(newbelief)
 
