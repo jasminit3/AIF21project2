@@ -119,7 +119,7 @@ class Contraction:
                         ('This should be removed from KB', k)
                         KB.remove(k)
 
-        #check if KB has three entries
+        # check if KB has three entries
         KB = co.checkKB(self, KB)
         # return updated KB in the end
         print('Contraction: updated KB is: ', KB)
