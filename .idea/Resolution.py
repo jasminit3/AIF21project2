@@ -25,6 +25,7 @@ class Resolution:
         re= Resolution
         KB = copy.deepcopy(KnB)
         formula = copy.deepcopy(Formula)
+        formula = KB[0] + '&' + formula
         formula = formula.replace(' ', '')
         if '&' in formula:
             formula = formula.split(sep = '&')
@@ -32,7 +33,8 @@ class Resolution:
         logical_entailment = []
         for alpha in formula:
             negated_alpha = re._negate(self, alpha)
-            clauses = KB
+            # print(negated_alpha)
+            clauses = copy.deepcopy(KB)
             clauses_set = set(KB)
             [clauses.append(item) for item in negated_alpha]
             new = []
@@ -42,7 +44,7 @@ class Resolution:
 
             while True:
 
-                #print(clauses)
+                # print(clauses)
                 for Ci_ind in range(len(clauses)):
                     for Cj_ind in range(Ci_ind + 1, len(clauses)):
                         #print(Ci_ind, Cj_ind)
