@@ -13,7 +13,7 @@ class KB:
         kb=KB()
         #print('input is', b)
         newbelief=kb.to_CNS(b)
-        print('get_sentence: newbelief in CNS-Format is: ',newbelief)
+        #print('get_sentence: newbelief in CNS-Format is: ',newbelief)
         # if input includes AND -> more than one new belief
         if '&' in newbelief:
             splitted_newbeliefs = kb.seperate_ANDs(newbelief)
@@ -31,7 +31,7 @@ class KB:
         k = Dictionary.Dictionary.KB #knowledgebase attribute
         i=0
         if new_belief in k:
-                print('Ask_func: Belief: ',new_belief, 'is already in KB, do nothing')
+                print('Belief: ',new_belief, 'is already in KB, do nothing')
         elif Resolution.Resolution.resolveKB(self, k, new_belief)==False:
             # do resolution:
             # if true -> issue with new belief -> call contraction
@@ -39,7 +39,7 @@ class KB:
 
             # if no problem append new_belief to KB
             Dictionary.Dictionary.KB = list(dict.fromkeys(Dictionary.Dictionary.KB))
-            print('Ask_function: belief added to KB: ',new_belief, 'New updated KB', Dictionary.Dictionary.KB)
+            print('Belief added to KB: ',new_belief, 'New updated KB', Dictionary.Dictionary.KB)
         else :#Resolution.Resolution.resolveKB(self, k, new_belief)==False:
             #Some isues we have to check what is actually
             Dictionary.Dictionary.KB.append(new_belief)
@@ -48,7 +48,7 @@ class KB:
             elif new_belief[0].isalpha() == False:
                 Dictionary.Dictionary.newBelief(self, new_belief[-1], False)
             Dictionary.Dictionary.KB = list(dict.fromkeys(Dictionary.Dictionary.KB))
-            print('Ask_function: updated KB is : ', Dictionary.Dictionary.KB)
+            print('Updated KB is : ', Dictionary.Dictionary.KB)
 
 
     def to_CNS(self, input):
@@ -128,8 +128,7 @@ class KB:
             str = str.partition('&')[-1]                    # everything on the right -> look for additional '&'
         statements.append(str)                              # rest of the original statement -> last statement
         return (statements)
-    def makeMethod(self, k):
-        print('I dont do anything',k)
+
 
 while True:
     B=KB()

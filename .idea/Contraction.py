@@ -48,7 +48,7 @@ class Contraction:
             old_entry = old_entry.replace('~~','')
             # check if new_entry has conflickt with dictionary
             if co.isIssue(self, new_entry):
-                print("Contraction: single literal in KB: ", KB, " gets updated with singe literal a: ", new_entry)
+                #print("Contraction: single literal in KB: ", KB, " gets updated with singe literal a: ", new_entry)
                 KB = co.replaceLiteral(self, new_entry, KB)
 
             # in addition, check if old_entry is part of OR-statement in KB
@@ -60,7 +60,7 @@ class Contraction:
                     # check for left and right halfs if conflict with dict
                     aIssue = co.isIssue(self, old_entry_a)
                     bIssue = co.isIssue(self, old_entry_b)
-                    print("Contraction: OR-statement in KB: ", KB, " gets updated with singe literal a: ", new_entry)
+                    #print("Contraction: OR-statement in KB: ", KB, " gets updated with singe literal a: ", new_entry)
 
                     if aIssue and bIssue:
                         # if conflict on both sides -> remove entire OR-statement
@@ -116,13 +116,13 @@ class Contraction:
 
                     elif k == old_entry_a + '|' + old_entry_b or k == new_entry_a + '|' + old_entry_b or k == new_entry_a + '|' + new_entry_b:
                         # if OR-statement is found in KB (with conflict on one or two sides) -> remove it
-                        ('This should be removed from KB', k)
+                        #('This should be removed from KB', k)
                         KB.remove(k)
 
         # check if KB has three entries
         KB = co.checkKB(self, KB)
         # return updated KB in the end
-        print('Contraction: updated KB is: ', KB)
+        #print('Contraction: updated KB is: ', KB)
         return (KB)
 
     def checkKB(self, KB):
