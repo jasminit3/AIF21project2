@@ -6,7 +6,11 @@ class MI_contraction:
         self.KB = KB
     
     def ContractionMI(self, contraction_statement):
-
+        """Performs contraction on a given KB"""
+        # This method takes only CNF input for all its operations, uses a list of sets to represent the KB internally amd perform operations.
+        # Uses Entrenchment for cases where the random decision are to be made.
+        # The entrenchment used is the position of the given letter in the alphabet.
+        # Z has more priority over A.
         KB_rep = [set(string.split(sep = '|')) for string in self.KB]
         res = Resolution.Resolution()
         contraction_statement_raw = contraction_statement.upper()
@@ -29,12 +33,12 @@ class MI_contraction:
         if and_count == 0 and or_count != 0:
             contraction_statement_rep = [contraction_statement_rep]
         
-
-        if res.resolveKB(self.KB, contraction_statement_raw):
+        
+        if res.resolveKB(self.KB, contraction_statement_raw):           # Performs contraction only if the entire CNF contraction statement is true.
             for index in range(len(contraction_statement_rep)):
                 statement = contraction_statement_rep[index]
+                statement = sorted(statement, key = lambda x: ord(x) if len(x) < 2 else len(x))
                 KB_statement = '|'.join(statement)
-                print(KB_statement)
                 truth_value = res.resolveKB(self.KB, KB_statement)
                 single_literal = False
                 if truth_value:
@@ -72,19 +76,21 @@ class MI_contraction:
 
                 self.KB = ['|'.join(sentence) for sentence in KB_rep]
             
-            print(self.KB)
             if len(self.KB) == 0:
+                print(self.KB)
                 return False
             else:
+                print(self.KB)
                 return True
 
         else:
             # new belief follows KB therefore can directly be added into the KB if performing revision.
+            print(self.KB)
             return True
 
 if __name__ == "__main__":
     while True:
-        user_input = input('Enter Knowledge base? (1 for preexisting 2 for new q for quit)\n')
+        user_input = input('Enter Knowledge base? (1 for preexisting 2 for new q to quit)\t')
         if user_input == '1':
             KB = ['~A', 'B|F', '~C', 'D']
             print(KB)
@@ -100,7 +106,7 @@ if __name__ == "__main__":
         agent = MI_contraction(KB)
         ret = True
         while ret:
-            contraction_statement = input("statement to be checked with KB in CNF format(q to quit): ")
+            contraction_statement = input("statement to be contracted from KB in CNF format(q to quit): ")
             if contraction_statement == 'q':
                 quit()
             else:
